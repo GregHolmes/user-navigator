@@ -5,11 +5,15 @@ class Chat extends CI_Controller {
     function __construct()
     {
         parent::__construct();
+
         $this->load->view('session_check');
-        $this->load->model('User_model', '', True);
+        $this->load->model('User_model', '', true);
+
         $username = $this->_getsessionuser();
+
         $data['info'] = $this->User_model->getuserDetails($username); 
-        $data['online_users'] = $this->User_model->getOnlineUsers($username); 
+        $data['online_users'] = $this->User_model->getOnlineUsers($username);
+
         $this->load->view('raw/basic_header',$data);
         $this->load->view('raw/basic_footer');
     }
@@ -18,42 +22,43 @@ class Chat extends CI_Controller {
     {
         $p = $this->session->userdata('logged_in');
         $username = $p['username'];
+
         return $username;
     }
 
     private function _getsessionuserid()
     {
-        $p      = $this->session->userdata('logged_in');
+        $p = $this->session->userdata('logged_in');
         $userid = $p['uid'];
+
         return $userid;
     }
 
 
 	public function index()
 	{
-                $this->load->model('user_model');
-                $this->load->model('message_model');
-                $limit = 10;
-                $start = 0;
-                $messageData = $this->message_model->getChatMessages($limit, $start);
-                $newMessageDataArray = array();
-                foreach($messageData as $message){
-                    $userData = $this->user_model->getUserDataById($message['uid']);
-                    $newMessage = array(
-                        'uid' => $message['uid'],
-                        'message' => $message['message'],
-                        'datetime' => $message['datetime'],
-                        'avatar' => $userData[0]['avatar'],
-                        'username' => $userData[0]['username']
-                    );
-                    
-                    $newMessage['messageHtml'] = $this->message_model->generateMessageHtml($newMessage);
-                    
-                    array_push($newMessageDataArray, $newMessage);
-                }
+        $this->load->model('user_model');
+        $this->load->model('message_model');
+        $limit = 10;
+        $start = 0;
+        $messageData = $this->message_model->getChatMessages($limit, $start);
+        $newMessageDataArray = array();
 
-                $returnData['messageData'] = array_reverse($newMessageDataArray);
-                
+        foreach ($messageData as $message){
+            $userData = $this->user_model->getUserDataById($message['uid']);
+            $newMessage = array(
+                'uid' => $message['uid'],
+                'message' => $message['message'],
+                'datetime' => $message['datetime'],
+                'avatar' => $userData[0]['avatar'],
+                'username' => $userData[0]['username']
+            );
+
+            $newMessage['messageHtml'] = $this->message_model->generateMessageHtml($newMessage);
+            array_push($newMessageDataArray, $newMessage);
+        }
+
+        $returnData['messageData'] = array_reverse($newMessageDataArray);
 		$this->load->view('chat_view', $returnData);
        
 	}
@@ -68,8 +73,8 @@ class Chat extends CI_Controller {
 
         $uid = $this->_getsessionuserid();
         $newMessageDataArray = array();
-        foreach($messageData as $message)
-        {
+
+        foreach($messageData as $message) {
             $userData = $this->user_model->getUserDataById($message['sender']);                         
             $newMessage = array(
                 'uid' => $message['receiver'],
@@ -80,14 +85,13 @@ class Chat extends CI_Controller {
             );
             
             $newMessage['messageHtml'] = $this->message_model->generateMessageHtml($newMessage);
-            
             array_push($newMessageDataArray, $newMessage);
         }
 
         $returnData['messageData'] = array_reverse($newMessageDataArray);
         $returnData['receiver'] = $p;
-        $returnData['receiveruid'] = $this->message_model->get_username($p);    
+        $returnData['receiveruid'] = $this->message_model->get_username($p);
+
         $this->load->view('im_view', $returnData);
-       
     }
 }
