@@ -41,7 +41,9 @@ class Auth_model extends CI_Model
         error_log("Auth user data: " . print_r($userData, true));
         
         $this->db->where('uid', $userData[0]['uid']);
-
+        #$query            = $this->db->get('facebook_user_details');
+        #$facebookUserData = $query->result_array();
+        
         $userId       = $userData[0]['uid'];
         $username     = $userData[0]['username'];
         $emailaddress = $userData[0]['user_email'];
@@ -51,14 +53,14 @@ class Auth_model extends CI_Model
         #$debug        = $userData[0]['debug'];
         #$updated      = $userData[0]['updated'];
         $avatar       =  $userData[0]['avatar'];
-        $id           = null;
-        $name         = null;
-        $link         = null;
-        $gender       = null;
-        $timezone     = null;
-        $locale       = null;
-        $verified     = null;
-        $updated_time = null;
+        $id           = isset($facebookUserData[0]['facebook_user_details_id']) ? $facebookUserData[0]['facebook_user_details_id'] : NULL;
+        $name         = isset($facebookUserData[0]['name']) ? $facebookUserData[0]['name'] : NULL;
+        $link         = isset($facebookUserData[0]['link']) ? $facebookUserData[0]['link'] : NULL;
+        $gender       = isset($facebookUserData[0]['gender']) ? $facebookUserData[0]['gender'] : NULL;
+        $timezone     = isset($facebookUserData[0]['timezone']) ? $facebookUserData[0]['timezone'] : NULL;
+        $locale       = isset($facebookUserData[0]['locale']) ? $facebookUserData[0]['locale'] : NULL;
+        $verified     = isset($facebookUserData[0]['verified']) ? $facebookUserData[0]['verified'] : NULL;
+        $updated_time = isset($facebookUserData[0]['updated_time']) ? $facebookUserData[0]['updated_time'] : NULL;
         
         //put the user data into an array for our session
         $session_data = array(
