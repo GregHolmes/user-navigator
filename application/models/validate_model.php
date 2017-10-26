@@ -1,6 +1,8 @@
 <?php
-class Validate_model extends CI_Model {
-function __construct()
+
+class Validate_model extends CI_Model
+{
+    function __construct()
     {
         parent::__construct();
     }
@@ -8,34 +10,29 @@ function __construct()
     function validateStringLength($string, $min, $max)
     {
         $strLength = strlen($string);
-        if(($strLength < $min) || ($strLength > $max))
-        {
+
+        if (($strLength < $min) || ($strLength > $max)) {
             return false;
         }
-        else
-        {
-            return true;
-        }
+
+        return true;
     }
     
-    function validateOnlyAlphaNumeric($string){
-        if (preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $string))
-        {
+    function validateOnlyAlphaNumeric($string)
+    {
+        if (preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $string)) {
             return false;
         }
-        else 
-        {
-            return true;
-        }
+
+        return true;
     }
     
-    function validateEmailAddress($emailAddress){
+    function validateEmailAddress($emailAddress)
+    {
         if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
            return false;
         }
-        else
-        {
-            return true;
-        }
+
+        return true;
     }
 }
