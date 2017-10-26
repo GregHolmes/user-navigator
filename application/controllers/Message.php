@@ -4,24 +4,24 @@ if (!defined('BASEPATH'))
 
 class Message extends CI_Controller
 {
-    
     function __construct()
     {
         parent::__construct();
+
         $this->load->view('session_check');
     }
 
     private function _getsessionuserid()
     {
-        $p      = $this->session->userdata('logged_in');
+        $p = $this->session->userdata('logged_in');
         $userid = $p['uid'];
+
         return $userid;
     }
     
     public function submit()
     {
-        if (!$this->session->userdata('logged_in'))
-        {
+        if (!$this->session->userdata('logged_in')) {
             exit(json_encode(array(
                 'status' => 'error',
                 'errormessage' => 'Please log in to submit chat messages'
@@ -29,8 +29,8 @@ class Message extends CI_Controller
         }
         
         $message = $this->input->post('message');
-        if ($message == '')
-        {
+
+        if ($message == '') {
             exit(json_encode(array(
                 'status' => 'error',
                 'errormessage' => 'Please enter a message to submit'
@@ -45,20 +45,20 @@ class Message extends CI_Controller
             'datetime' => date('Y-m-d H:i:s')
         );
         
-        $returnMessageData          = $this->message_model->insertMessage($messageData);
-        $messageData['message_id']  = $returnMessageData;
-        $messageData['avatar']      = $this->session->userdata('logged_in')['avatar'];
-        $messageData['username']    = $this->session->userdata('logged_in')['username'];
-        $messageHtml                = $this->message_model->generateMessageHtml($messageData);
+        $returnMessageData = $this->message_model->insertMessage($messageData);
+        $messageData['message_id'] = $returnMessageData;
+        $messageData['avatar'] = $this->session->userdata('logged_in')['avatar'];
+        $messageData['username'] = $this->session->userdata('logged_in')['username'];
+        $messageHtml = $this->message_model->generateMessageHtml($messageData);
         $messageData['messageHtml'] = $messageHtml;
-        $messageData['status']      = "success";
+        $messageData['status'] = "success";
+
         exit(json_encode($messageData));
     }
     
     public function im()
     {
-        if (!$this->session->userdata('logged_in'))
-        {
+        if (!$this->session->userdata('logged_in')) {
             exit(json_encode(array(
                 'status' => 'error',
                 'errormessage' => 'Please log in to submit chat messages'
@@ -67,8 +67,8 @@ class Message extends CI_Controller
         
         $message = $this->input->post('message');
         $receiver = $this->input->post('receiver');
-        if ($message == '' OR $receiver=='')
-        {
+
+        if ($message === '' OR $receiver === '') {
             exit(json_encode(array(
                 'status' => 'error',
                 'errormessage' => 'Somethings went wrong!'
@@ -84,13 +84,14 @@ class Message extends CI_Controller
             'datetime' => date('Y-m-d H:i:s')
         );
         
-        $returnMessageData          = $this->message_model->insertimMessage($messageData);
-        $messageData['message_id']  = $returnMessageData;
-        $messageData['avatar']      = $this->session->userdata('logged_in')['avatar'];
-        $messageData['username']    = $this->session->userdata('logged_in')['username'];
-        $messageHtml                = $this->message_model->generateimMessageHtml($messageData);
+        $returnMessageData = $this->message_model->insertimMessage($messageData);
+        $messageData['message_id'] = $returnMessageData;
+        $messageData['avatar'] = $this->session->userdata('logged_in')['avatar'];
+        $messageData['username'] = $this->session->userdata('logged_in')['username'];
+        $messageHtml = $this->message_model->generateimMessageHtml($messageData);
         $messageData['messageHtml'] = $messageHtml;
-        $messageData['status']      = "success";
+        $messageData['status'] = "success";
+
         exit(json_encode($messageData));
     }
     
@@ -99,15 +100,15 @@ class Message extends CI_Controller
     {
         $this->load->model('user_model');
         $this->load->model('message_model');
-        $pageNum     = $this->uri->segment(4);
+        $pageNum = $this->uri->segment(4);
         $queryuser = $this->uri->segment(3);
-        $limit       = 10;
-        $start       = $pageNum * 10;
+        $limit = 10;
+        $start = $pageNum * 10;
         $messageData = $this->message_model->getChatMessagesbyuser($limit, $start,$queryuser);
         
         $returnMessageArray = array();
-        foreach ($messageData as $message)
-        {
+
+        foreach ($messageData as $message) {
             $userData   = $this->user_model->getUserDataById($message['sender']);
             $newMessage = array(
                 'user_id' => $message['receiver'],
@@ -118,14 +119,12 @@ class Message extends CI_Controller
             );
             
             $newMessage['messageHtml'] = $this->message_model->generateMessageHtml($newMessage);
-            
             array_push($returnMessageArray, $newMessage);
         }
-        #echo '<xmp>';
+
         echo json_encode(array(
             'status' => 'success',
             'messageData' => $returnMessageArray
         ));
-        #echo '</xmp>';
     }
 }
